@@ -4,7 +4,30 @@ def input_error(func):
             return func(*args, **kwargs)
         except ValueError:
             return "Give me name and phone please."
+    return inner
 
+
+def change_contact_error(func):
+    def inner(*args, **kwargs):
+        if not args[0]:
+            return 'Give me name and phone, please.'
+        elif args[0][0] not in args[1].keys():
+            return 'User does not exists.'
+        elif len(args[0]) == 1:
+            return 'Give me phone too, please.'
+        else:
+            return func(*args, **kwargs)
+    return inner
+
+
+def get_phone_error(func):
+    def inner(*args, **kwargs):
+        if not args[0]:
+            return 'Give me name, please.'
+        elif args[0][0] not in args[1].keys():
+            return 'User does not exists.'
+        else:
+            return func(*args, **kwargs)
     return inner
 
 
@@ -23,27 +46,21 @@ def add_contact(args, contacts):
     return 'Contact added.'
 
 
+@change_contact_error
 def change_contact(args, contacts):
-    if not args:
-        return 'You need to type username'
-    else:
-        if len(args) == 1:
-            return 'You need to type phone number'
-        name, phone = args
-        if name and name in contacts.keys():
-            contacts[name] = phone
-            return 'Contact added.'
+    name, phone = args
+    contacts[name] = phone
+    return 'Contact changed.'
 
 
 def get_all(args, contacts):
     return contacts
 
 
+@get_phone_error
 def get_phone(args, contacts):
     name = args
-    if name:
-        return contacts[name[0]]
-    return 'You need to point out username, please!'
+    return contacts[name[0]]
 
 
 def unknown_command(args, contacts):
