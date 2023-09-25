@@ -25,34 +25,33 @@ class Record:
         self.name = name
         self.phones = [phone]
 
-    def add_phone(self, phone):
+    def add_phone(self, phone: Phone):
         self.phones.append(phone)
 
-    def edit_phone(self, old_phone, new_phone):
+    def edit_phone(self, old_phone: Phone, new_phone: Phone):
         self.phones.remove(old_phone)
         self.phones.append(new_phone)
 
-    def find_phone(self, phone):
-        if phone in self.phones:
-            return phone
+    def find_phone(self, name: Name):
+        self.name = name
+        if self.name:
+            return self.phones
 
-    def remove_phone(self, phone):
+    def remove_phone(self, phone: Phone):
         self.phones.remove(phone)
 
     def __str__(self):
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
+        return f"Record | contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
 
 
 class AddressBook(UserDict):
-    # def __init__(self, data):
-    #     self.data = data
 
     def add_record(self, record: Record):
         self[record.name.value] = record
 
-    def find(self, name):
-        if name in self.data.keys():
-            return {name, self.data[name]}
+    def find(self, name: Name):
+        if name.value in list(self.keys()):
+            return self[name.value]
 
-    def delete(self, name):
+    def delete(self, name: Name):
         del self.data[name]

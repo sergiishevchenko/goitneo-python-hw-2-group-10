@@ -1,5 +1,6 @@
 from classes import Name, Phone, Record, AddressBook
 
+
 def input_error(func):
     def inner(*args, **kwargs):
         try:
@@ -9,30 +10,6 @@ def input_error(func):
         except KeyError:
             return 'User does not exists.'
     return inner
-
-
-# def change_contact_error(func):
-#     def inner(*args, **kwargs):
-#         if not args[0]:
-#             return 'Give me name and phone, please.'
-#         elif args[0][0] not in args[1].keys():
-#             return 'User does not exists.'
-#         elif len(args[0]) == 1:
-#             return 'Give me phone too, please.'
-#         else:
-#             return func(*args, **kwargs)
-#     return inner
-
-
-# def get_phone_error(func):
-#     def inner(*args, **kwargs):
-#         if not args[0]:
-#             return 'Give me name, please.'
-#         elif args[0][0] not in args[1].keys():
-#             return 'User does not exists.'
-#         else:
-#             return func(*args, **kwargs)
-#     return inner
 
 
 def hello_command(args, contacts):
@@ -52,18 +29,25 @@ def add_contact(args, contacts: AddressBook):
 
 
 @input_error
-def change_contact(args, contacts):
-    name, phone = args
-    contacts[name] = phone
-    return 'Contact changed.'
+def change_contact(args, contacts: AddressBook):
+    name = Name(args[0])
+    new_phone = Phone(args[1])
+
+    old_record = contacts.find(name)
+    if old_record:
+        old_phone = old_record.phones[0]
+        old_record.edit_phone(old_phone, new_phone)
+        return 'Contact changed.'
+    else:
+        return 'User does not exists.'
 
 
-def get_all(args, contacts):
+def get_all(args, contacts: AddressBook):
     return contacts
 
 
 @input_error
-def get_phone(args, contacts):
+def get_phone(args, contacts: AddressBook):
     name = args
     return contacts[name[0]]
 
