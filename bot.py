@@ -1,34 +1,38 @@
+from classes import Name, Phone, Record, AddressBook
+
 def input_error(func):
     def inner(*args, **kwargs):
         try:
             return func(*args, **kwargs)
-        except ValueError:
+        except IndexError:
             return "Give me name and phone please."
-    return inner
-
-
-def change_contact_error(func):
-    def inner(*args, **kwargs):
-        if not args[0]:
-            return 'Give me name and phone, please.'
-        elif args[0][0] not in args[1].keys():
+        except KeyError:
             return 'User does not exists.'
-        elif len(args[0]) == 1:
-            return 'Give me phone too, please.'
-        else:
-            return func(*args, **kwargs)
     return inner
 
 
-def get_phone_error(func):
-    def inner(*args, **kwargs):
-        if not args[0]:
-            return 'Give me name, please.'
-        elif args[0][0] not in args[1].keys():
-            return 'User does not exists.'
-        else:
-            return func(*args, **kwargs)
-    return inner
+# def change_contact_error(func):
+#     def inner(*args, **kwargs):
+#         if not args[0]:
+#             return 'Give me name and phone, please.'
+#         elif args[0][0] not in args[1].keys():
+#             return 'User does not exists.'
+#         elif len(args[0]) == 1:
+#             return 'Give me phone too, please.'
+#         else:
+#             return func(*args, **kwargs)
+#     return inner
+
+
+# def get_phone_error(func):
+#     def inner(*args, **kwargs):
+#         if not args[0]:
+#             return 'Give me name, please.'
+#         elif args[0][0] not in args[1].keys():
+#             return 'User does not exists.'
+#         else:
+#             return func(*args, **kwargs)
+#     return inner
 
 
 def hello_command(args, contacts):
@@ -40,13 +44,14 @@ def exit_command(args, contacts):
 
 
 @input_error
-def add_contact(args, contacts):
-    name, phone = args
-    contacts[name] = phone
+def add_contact(args, contacts: AddressBook):
+    name = Name(args[0])
+    phone = Phone(args[1])
+    contacts.add_record(Record(name, phone))
     return 'Contact added.'
 
 
-@change_contact_error
+@input_error
 def change_contact(args, contacts):
     name, phone = args
     contacts[name] = phone
@@ -57,7 +62,7 @@ def get_all(args, contacts):
     return contacts
 
 
-@get_phone_error
+@input_error
 def get_phone(args, contacts):
     name = args
     return contacts[name[0]]
@@ -88,7 +93,7 @@ def parser(user_input: str):
 def main():
     print('Welcome to the assistant bot!')
 
-    contacts = {}
+    contacts = AddressBook()
     while True:
         user_input = input('Enter a command: ')
         cmd, data = parser(user_input)

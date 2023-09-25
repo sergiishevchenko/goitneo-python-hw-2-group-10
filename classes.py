@@ -12,19 +12,18 @@ class Field:
 
 
 class Name(Field):
-    def __init__(self, name):
-        self.name = name
+    ...
 
 
 class Phone(Field):
-    def validate(self, phone):
-        return re.match(r'(\+[0-9]+\s*)?(\([0-9]+\))?[\s0-9\-]+[0-9]+', phone)
+    def validate(self, value):
+        return re.match(r'(\+[0-9]+\s*)?(\([0-9]+\))?[\s0-9\-]+[0-9]+', value)
 
 
 class Record:
-    def __init__(self, name):
-        self.name = Name(name)
-        self.phones = []
+    def __init__(self, name: Name, phone: Phone):
+        self.name = name
+        self.phones = [phone]
 
     def add_phone(self, phone):
         self.phones.append(phone)
@@ -45,11 +44,11 @@ class Record:
 
 
 class AddressBook(UserDict):
-    def __init__(self, data):
-        self.data = data
+    # def __init__(self, data):
+    #     self.data = data
 
     def add_record(self, record: Record):
-        self.data.update(record)
+        self[record.name.value] = record
 
     def find(self, name):
         if name in self.data.keys():
